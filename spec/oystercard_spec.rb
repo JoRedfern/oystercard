@@ -16,24 +16,35 @@ describe Oystercard do
     expect {card.top_up(0.01) }.to raise_error "Maximum balance is #{Oystercard::MAX_BALANCE}"
   end
 
-  it "deducts money from the balance when fare is taken" do
-    card = Oystercard.new(10)
-    expect(card.deduct(4)).to eq(6)
-  end
+  # it "deducts money from the balance when fare is taken" do
+  #   card = Oystercard.new(10)
+  #   expect(card.deduct).to eq(9)
+  # end
 
   it "is initially not in use" do
     expect(subject).not_to be_in_journey
   end
 
   it "responds to touch_in" do
-    subject.touch_in
-    expect(subject).to be_in_journey
+    card = Oystercard.new(20)
+    card.touch_in
+    expect(card).to be_in_journey
   end
 
   it "responds to touch_out" do
-    subject.touch_in
-    subject.touch_out
-    expect(subject).not_to be_in_journey
+    card = Oystercard.new(20)
+    card.touch_in
+    card.touch_out
+    expect(card).not_to be_in_journey
   end
-  
+
+  it "cannot touch_in when balance is below minimum balance" do
+    card = Oystercard.new
+    expect {card.touch_in}.to raise_error "Balance is below minimum journey price"
+  end
+
+  it "updates balance when journey is complete" do
+    card = Oystercard.new(5)
+    expect { card.touch_out }.to change{ card.balance }.by(-Oystercard::MINIMUM_CHARGE)
+  end
 end
