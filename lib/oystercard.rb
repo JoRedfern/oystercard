@@ -3,7 +3,7 @@ class Oystercard
   MAX_BALANCE = 90
   MIN_BALANCE_TO_TOUCH_IN = 1
   MINIMUM_CHARGE = 1
-  attr_accessor :balance, :MAX_BALANCE, :in_journey, :MIN_BALANCE_TO_TOUCH_IN, :MINIMUM_CHARGE
+  attr_accessor :balance, :MAX_BALANCE, :in_journey, :MIN_BALANCE_TO_TOUCH_IN, :MINIMUM_CHARGE, :entry_station
 
   def initialize(balance = DEFAULT_BALANCE)
     fail "Maximum balance is #{Oystercard::MAX_BALANCE}" if balance > MAX_BALANCE
@@ -16,16 +16,16 @@ class Oystercard
   end
 
   def in_journey?
-    @in_journey
+    !!entry_station
   end
 
-  def touch_in
+  def touch_in(station)
     fail "Balance is below minimum journey price" if balance < MIN_BALANCE_TO_TOUCH_IN
-    @in_journey = true
+    @entry_station = station
   end
 
   def touch_out
-    @in_journey = false
+    @entry_station = nil
     deduct
   end
 

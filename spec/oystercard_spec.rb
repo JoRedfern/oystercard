@@ -1,6 +1,6 @@
 require "oystercard"
 describe Oystercard do
-
+let(:station){ double :station }
   it "creates a card with a balance of zero" do
     card = Oystercard.new
     expect(card.balance).to eq(0)
@@ -27,24 +27,31 @@ describe Oystercard do
 
   it "responds to touch_in" do
     card = Oystercard.new(20)
-    card.touch_in
+    card.touch_in(station)
     expect(card).to be_in_journey
   end
 
   it "responds to touch_out" do
     card = Oystercard.new(20)
-    card.touch_in
+    card.touch_in(station)
     card.touch_out
     expect(card).not_to be_in_journey
   end
 
   it "cannot touch_in when balance is below minimum balance" do
     card = Oystercard.new
-    expect {card.touch_in}.to raise_error "Balance is below minimum journey price"
+    expect { card.touch_in(station) }.to raise_error "Balance is below minimum journey price"
   end
 
   it "updates balance when journey is complete" do
     card = Oystercard.new(5)
     expect { card.touch_out }.to change{ card.balance }.by(-Oystercard::MINIMUM_CHARGE)
+  end
+
+
+  it "stores the entry station when you touch in" do
+    card = Oystercard.new(10)
+    card.touch_in(station)
+    expect(card.entry_station).to eq station
   end
 end
