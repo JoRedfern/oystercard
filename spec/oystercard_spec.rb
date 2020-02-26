@@ -2,6 +2,7 @@ require "oystercard"
 describe Oystercard do
 let(:entry_station){ double :station }
 let(:exit_station){ double :station}
+let(:journey){ {entry_station: entry_station, exit_station: exit_station} }
   it "creates a card with a balance of zero" do
     card = Oystercard.new
     expect(card.balance).to eq(0)
@@ -46,7 +47,6 @@ let(:exit_station){ double :station}
     expect { card.touch_out(exit_station) }.to change{ card.balance }.by(-Oystercard::MINIMUM_CHARGE)
   end
 
-
   it "stores the entry station when you touch in" do
     card = Oystercard.new(10)
     card.touch_in(entry_station)
@@ -56,5 +56,12 @@ let(:exit_station){ double :station}
   it "stores the exit station when you touch out" do
     subject.touch_out(exit_station)
     expect(subject.exit_station).to eq exit_station
+  end
+
+  it "stores a journey" do
+    subject.top_up(20)
+    subject.touch_in(entry_station)
+    subject.touch_out(exit_station)
+    expect(subject.travel_history).to include journey
   end
 end
