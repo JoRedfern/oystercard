@@ -27,9 +27,9 @@ class Oystercard
 
   def touch_out(exit_station)
     deduct
-    @entry_station = entry_station
-    @exit_station = exit_station
+    @entry_station, @exit_station = entry_station, exit_station
     @travel_history.push( {entry_station: entry_station, exit_station: exit_station } )
+    @balance
   end
 
 private
